@@ -1,163 +1,87 @@
-# E-Commerce Database Chat
+# E-Commerce Database Chat (RAG Demo)
 
-> **Note:** This is a demonstration project showcasing RAG-enabled natural language database querying.
+> **Demo Project** — Retrieval-Augmented Generation (RAG) over structured data using LLM-driven SQL agents.
 
-A RAG-enabled chatbot that lets you query e-commerce data using natural language. Built with LangChain SQL agents and OpenAI, it enables intuitive queries against 536,000+ real transaction records.
+A retrieval-augmented generation (RAG) system that enables **natural-language question answering over a large relational database**.  
+Built with **LangChain SQL agents** and **OpenAI**, this project demonstrates how to safely ground LLM responses in **real, structured data** rather than free-form text generation.
 
-[![CI](https://github.com/bmaynard87/chat-with-db-project/workflows/CI/badge.svg)](https://github.com/bmaynard87/chat-with-db-project/actions)
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+The included SQLite database contains **536,000+ real e-commerce transaction records**, allowing realistic analytics and follow-up questions.
+
+---
+
+## What This Project Demonstrates
+
+This project intentionally focuses on **structured-data RAG**, showcasing how to:
+
+- Translate natural language into **schema-aware SQL**
+- Ground LLM responses exclusively in database retrieval
+- Apply **domain constraints** to reduce hallucinations
+- Maintain conversational context across follow-up questions
+- Test and validate AI-driven workflows end-to-end
+
+It avoids unnecessary vector search to highlight cases where **classic relational databases are the optimal retrieval layer**.
+
+---
+
+## Architecture Overview
+
+```
+User (CLI)
+   ↓
+LangChain SQL Agent
+   ↓
+Schema-aware SQL generation
+   ↓
+SQLite query execution
+   ↓
+Retrieved rows
+   ↓
+LLM synthesis grounded in results
+```
+
+---
 
 ## Setup
 
-1. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-2. Configure your OpenAI API key:
-   - Copy `.env.example` to `.env` (or create `.env` file)
-   - Replace `your-api-key-here` with your actual OpenAI API key
+Create a `.env` file and add your OpenAI API key.
 
-> **Note:** The database (`ecommerce.db`) is included in the repository, so no additional setup is required.
+---
 
 ## Usage
 
-Run the command-line chat interface:
 ```bash
 python chat_cli.py
 ```
 
-For verbose mode (shows SQL queries and agent reasoning):
+Verbose mode:
 ```bash
 python chat_cli.py -v
 ```
 
-Then ask questions like:
-- "What are the top 5 countries by total revenue?"
-- "Show me the most popular products"
-- "What is the average transaction value?"
-- "How many transactions were there in December?"
-
-**Follow-up questions** (using conversation memory):
-- After asking about top countries: "What about the bottom 5?"
-- After product query: "Show me their average prices"
-- After revenue question: "How does that compare to last year?"
-
-Type `exit` or `quit` to end the session.
+---
 
 ## Project Structure
 
-- `chat_cli.py` - CLI entry point
-- `src/` - Main application package
-  - `cli.py` - Interactive chat loop and argument parsing
-  - `agent.py` - LangChain SQL agent setup
-  - `config.py` - Configuration and environment variables
-  - `utils.py` - Helper utilities (Spinner class)
-- `tests/` - Test suite (35 tests, 96% coverage)
-  - `conftest.py` - Pytest fixtures and shared test utilities
-  - `test_*.py` - Unit and integration tests
-- `.github/workflows/` - CI/CD automation
-  - `ci.yml` - Testing and linting pipeline
-  - `release.yml` - Package build automation
-- `ecommerce.db` - SQLite database (536K+ rows, included in repo)
-- `.env` - Environment variables (API keys)
-- `pyproject.toml` - Project configuration and dependencies
-- `requirements.txt` - Python dependencies
+See repository for full breakdown.
 
-## Database Schema
-
-The `transactions` table contains:
-- **InvoiceNo** - Transaction identifier
-- **StockCode** - Product SKU
-- **Description** - Product/entry description
-- **Quantity** - Items purchased
-- **InvoiceDate** - Transaction timestamp
-- **UnitPrice** - Price per unit
-- **CustomerID** - Customer identifier
-- **Country** - Customer country
-
-## Features
-
-- 🤖 **Natural Language Queries**: Ask questions in plain English, get accurate answers
-- 🧠 **Conversation Memory**: Maintains context across questions for follow-up queries
-- 🔍 **Smart Data Filtering**: Automatically excludes non-product entries (adjustments, fees, etc.)
-- 🎯 **High Accuracy**: 96% test coverage ensures reliable query results
-- ⚡ **Fast Setup**: Database included, no data prep needed
-- 🐛 **Debug Mode**: Verbose flag shows SQL queries and agent reasoning
-- 🧪 **Well-Tested**: 35 automated tests across unit, integration, and CLI scenarios
-- 🔄 **CI/CD Ready**: GitHub Actions pipeline with multi-platform testing
-
-## How It Works
-
-1. User enters a natural language question
-2. LangChain SQL agent (using OpenAI's function calling) converts it to SQL
-3. Query executes against the SQLite database
-4. Agent formats and returns the answer in natural language
-5. Conversation history maintained for context-aware follow-up questions
-
-The agent includes:
-- **Domain-specific filtering**: Excludes non-product entries (adjustments, bad debt, postage)
-- **Conversation memory**: Tracks chat history for contextual understanding
-- **Follow-up capability**: Reference previous queries ("What about last month?", "Show top 3")
+---
 
 ## Development
 
-### Running Tests
-
-Run the test suite with pytest:
 ```bash
-# Run all tests
 pytest
-
-# Run with coverage report
-pytest --cov=src --cov-report=html
-
-# Run specific test file
-pytest tests/test_config.py
-
-# Run with verbose output
-pytest -v
-```
-
-The test suite includes:
-- **Unit tests** - Individual module testing with mocks
-- **Integration tests** - End-to-end flow validation
-- **Configuration tests** - Environment and setup validation
-- **CLI tests** - Argument parsing and interactive loop testing
-
-### Project Dependencies
-
-Development dependencies are included in `requirements.txt`:
-- `pytest` - Testing framework
-- `pytest-cov` - Coverage reporting
-- `pytest-mock` - Enhanced mocking support
-
-Install development dependencies:
-```bash
-pip install -r requirements.txt
-pip install flake8 black isort mypy
-```
-
-### Code Quality
-
-Format code with black:
-```bash
 black src/ tests/
 ```
 
-Sort imports with isort:
-```bash
-isort src/ tests/
-```
+---
 
-Run linter:
-```bash
-flake8 src/
-```
+## Use Cases
 
-Type checking:
-```bash
-mypy src/ --ignore-missing-imports
-```
+- Conversational analytics
+- Internal data exploration
+- Business intelligence tooling
+- AI-assisted reporting
