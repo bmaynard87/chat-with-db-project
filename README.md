@@ -4,7 +4,7 @@
 
 A RAG-enabled chatbot that lets you query e-commerce data using natural language. Built with LangChain SQL agents and OpenAI, it enables intuitive queries against 536,000+ real transaction records.
 
-[![CI](https://github.com/YOUR_USERNAME/chat-with-db-project/workflows/CI/badge.svg)](https://github.com/YOUR_USERNAME/chat-with-db-project/actions)
+[![CI](https://github.com/bmaynard87/chat-with-db-project/workflows/CI/badge.svg)](https://github.com/bmaynard87/chat-with-db-project/actions)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
