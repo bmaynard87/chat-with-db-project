@@ -40,6 +40,11 @@ Then ask questions like:
 - "What is the average transaction value?"
 - "How many transactions were there in December?"
 
+**Follow-up questions** (using conversation memory):
+- After asking about top countries: "What about the bottom 5?"
+- After product query: "Show me their average prices"
+- After revenue question: "How does that compare to last year?"
+
 Type `exit` or `quit` to end the session.
 
 ## Project Structure
@@ -76,6 +81,7 @@ The `transactions` table contains:
 ## Features
 
 - 🤖 **Natural Language Queries**: Ask questions in plain English, get accurate answers
+- 🧠 **Conversation Memory**: Maintains context across questions for follow-up queries
 - 🔍 **Smart Data Filtering**: Automatically excludes non-product entries (adjustments, fees, etc.)
 - 🎯 **High Accuracy**: 96% test coverage ensures reliable query results
 - ⚡ **Fast Setup**: Database included, no data prep needed
@@ -89,8 +95,12 @@ The `transactions` table contains:
 2. LangChain SQL agent (using OpenAI's function calling) converts it to SQL
 3. Query executes against the SQLite database
 4. Agent formats and returns the answer in natural language
+5. Conversation history maintained for context-aware follow-up questions
 
-The agent includes domain-specific logic to filter out non-product entries (adjustments, bad debt, postage) for accurate product and revenue queries.
+The agent includes:
+- **Domain-specific filtering**: Excludes non-product entries (adjustments, bad debt, postage)
+- **Conversation memory**: Tracks chat history for contextual understanding
+- **Follow-up capability**: Reference previous queries ("What about last month?", "Show top 3")
 
 ## Development
 

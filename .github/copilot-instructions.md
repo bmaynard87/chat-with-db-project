@@ -8,15 +8,18 @@ RAG-enabled natural language chatbot for querying e-commerce data using LangChai
 ### Core Components
 - **Entry Point**: [chat_cli.py](../chat_cli.py) → delegates to `src.cli.main()`
 - **Agent Layer**: [src/agent.py](../src/agent.py) - LangChain SQL agent using `openai-tools` agent type
+- **Memory Layer**: [src/memory.py](../src/memory.py) - Conversation memory for context-aware queries
 - **CLI Interface**: [src/cli.py](../src/cli.py) - interactive chat loop with optional verbose mode
 - **Config**: [src/config.py](../src/config.py) - centralized settings with `.env` integration
 - **Utils**: [src/utils.py](../src/utils.py) - `Spinner` class for non-verbose UI feedback
 
 ### Data Flow
 1. User enters natural language question
-2. CLI passes to LangChain SQL agent (`create_sql_agent`)
-3. Agent uses `SQLDatabaseToolkit` to query SQLite database (`ecommerce.db`)
-4. Response formatted and returned through CLI
+2. CLI passes question + conversation history to LangChain SQL agent
+3. Agent uses conversation memory for context understanding
+4. Agent uses `SQLDatabaseToolkit` to query SQLite database (`ecommerce.db`)
+5. Response formatted and returned through CLI
+6. Conversation memory updated with question and answer
 
 ## Critical Setup Requirements
 
@@ -76,7 +79,16 @@ Agent uses:
 - **Agent Type**: `openai-tools` (leverages OpenAI function calling)
 - **Temperature**: 0 (deterministic responses for queries)
 - **System Prompt**: Embedded domain knowledge about filtering e-commerce data
+- **Memory**: `ConversationBufferMemory` for maintaining chat context
 - **Verbose Mode**: Controlled via CLI flag, passed through to agent
+
+### Memory Implementation
+Conversation memory enables context-aware queries:
+- **Type**: `ConversationBufferMemory` from LangChain
+- **Scope**: Per-session (cleared on exit)
+- **Usage**: Agent can reference previous questions/answers
+- **Benefits**: Follow-up questions ("What about X?", "Show me more", "How does that compare?")
+- **Memory Key**: `chat_history` passed to agent executor
 
 ## Dependencies & Tech Stack
 - **LangChain**: SQL agent framework (`langchain-community`, `langchain-openai`)
