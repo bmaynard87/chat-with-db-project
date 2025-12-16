@@ -16,21 +16,31 @@ def test_full_query_flow_with_mock_llm(mock_env_vars, temp_db, monkeypatch):
     importlib.reload(config)
 
     # Mock the LLM and agent creation
-    mock_llm_response = Mock()
-    mock_llm_response.invoke.return_value = {"output": "Total revenue is $100"}
+    mock_response = {"output": "Total revenue is $100"}
 
     with (
         patch("src.agent.ChatOpenAI") as mock_llm,
         patch("src.agent.create_sql_agent") as mock_create,
+        patch("src.agent.RunnableWithMessageHistory") as mock_runnable,
         patch("src.agent.SQLDatabase"),
         patch("src.agent.SQLDatabaseToolkit"),
     ):
 
         mock_llm.return_value = Mock()
-        mock_create.return_value = mock_llm_response
+        mock_agent = Mock()
+        mock_agent.invoke.return_value = mock_response
+        mock_create.return_value = mock_agent
+
+        # Mock the wrapped agent
+        mock_wrapped = Mock()
+        mock_wrapped.invoke.return_value = mock_response
+        mock_runnable.return_value = mock_wrapped
 
         agent_executor = agent.setup_agent(verbose=False)
-        response = agent_executor.invoke({"input": "What is the total revenue?"})
+        response = agent_executor.invoke(
+            {"input": "What is the total revenue?"},
+            config={"configurable": {"session_id": "test_session"}},
+        )
 
         assert response["output"] == "Total revenue is $100"
         mock_create.assert_called_once()

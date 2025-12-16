@@ -53,7 +53,12 @@ def test_chat_loop_processes_question(mock_agent, capsys):
     with patch("builtins.input", side_effect=["What is the revenue?", "exit"]):
         chat_loop(mock_agent, verbose=True)  # verbose=True to skip spinner
 
-        mock_agent.invoke.assert_called_once_with({"input": "What is the revenue?"})
+        # Verify agent was called with session config
+        mock_agent.invoke.assert_called_once()
+        call_args = mock_agent.invoke.call_args
+        assert call_args[0][0] == {"input": "What is the revenue?"}
+        assert "session_id" in call_args[1]["config"]["configurable"]
+
         captured = capsys.readouterr()
         assert "Test response" in captured.out
 

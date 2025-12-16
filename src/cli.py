@@ -10,13 +10,14 @@ from .config import validate_config
 from .utils import Spinner
 
 
-def chat_loop(agent_executor, verbose=False):
+def chat_loop(agent_executor, verbose=False, session_id="default"):
     """
     Run the interactive chat loop.
 
     Args:
         agent_executor: Initialized agent executor
         verbose (bool): Whether to show detailed operations
+        session_id (str): Session identifier for conversation memory
     """
     print("=" * 60)
     print("E-Commerce Database Chat CLI")
@@ -47,7 +48,11 @@ def chat_loop(agent_executor, verbose=False):
                 spinner.start()
 
             try:
-                response = agent_executor.invoke({"input": question})
+                # Invoke with session config for memory support
+                response = agent_executor.invoke(
+                    {"input": question},
+                    config={"configurable": {"session_id": session_id}},
+                )
             finally:
                 if not verbose:
                     spinner.stop()
