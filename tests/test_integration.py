@@ -1,7 +1,8 @@
 """Integration tests for end-to-end functionality."""
 
+from unittest.mock import Mock, patch
+
 import pytest
-from unittest.mock import patch, Mock
 
 
 def test_full_query_flow_with_mock_llm(mock_env_vars, temp_db, monkeypatch):
@@ -9,7 +10,8 @@ def test_full_query_flow_with_mock_llm(mock_env_vars, temp_db, monkeypatch):
     monkeypatch.setenv("DB_PATH", temp_db)
 
     import importlib
-    from src import config, agent
+
+    from src import agent, config
 
     importlib.reload(config)
 
@@ -41,8 +43,10 @@ def test_database_connection_with_real_db(monkeypatch):
     monkeypatch.setenv("DB_PATH", "ecommerce.db")
 
     import importlib
-    from src import config
+
     from langchain_community.utilities import SQLDatabase
+
+    from src import config
 
     importlib.reload(config)
 
@@ -77,6 +81,7 @@ def test_cli_entry_point(mock_env_vars, mock_agent):
 def test_config_validation_integration(tmp_path, monkeypatch):
     """Test configuration validation with various scenarios."""
     import importlib
+
     from src import config
 
     # Valid configuration

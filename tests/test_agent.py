@@ -1,7 +1,8 @@
 """Tests for agent module."""
 
+from unittest.mock import MagicMock, Mock, patch
+
 import pytest
-from unittest.mock import Mock, patch, MagicMock
 
 
 def test_setup_agent_creates_database_connection(mock_env_vars, mock_openai, mock_sql_agent, temp_db, monkeypatch):
@@ -9,7 +10,8 @@ def test_setup_agent_creates_database_connection(mock_env_vars, mock_openai, moc
     monkeypatch.setenv("DB_PATH", temp_db)
 
     import importlib
-    from src import config, agent
+
+    from src import agent, config
 
     importlib.reload(config)
 

@@ -2,11 +2,11 @@
 Command-line interface for the database chatbot.
 """
 
-import sys
 import argparse
+import sys
 
-from .config import validate_config
 from .agent import setup_agent
+from .config import validate_config
 from .utils import Spinner
 
 

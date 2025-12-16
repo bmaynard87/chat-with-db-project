@@ -1,9 +1,10 @@
 """Tests for CLI module."""
 
-import pytest
 import sys
 from io import StringIO
-from unittest.mock import Mock, patch, call
+from unittest.mock import Mock, call, patch
+
+import pytest
 
 
 def test_parse_args_default():

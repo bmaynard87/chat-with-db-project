@@ -2,12 +2,12 @@
 Agent setup and initialization.
 """
 
-from langchain_community.utilities import SQLDatabase
-from langchain_openai import ChatOpenAI
 from langchain_community.agent_toolkits import create_sql_agent
 from langchain_community.agent_toolkits.sql.toolkit import SQLDatabaseToolkit
+from langchain_community.utilities import SQLDatabase
+from langchain_openai import ChatOpenAI
 
-from .config import DB_PATH, MODEL, TEMPERATURE, SYSTEM_PROMPT
+from .config import DB_PATH, MODEL, SYSTEM_PROMPT, TEMPERATURE
 
 
 def setup_agent(verbose=False):

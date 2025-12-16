@@ -1,9 +1,10 @@
 """Tests for utility module."""
 
 import time
-import pytest
 from io import StringIO
 from unittest.mock import patch
+
+import pytest
 
 
 def test_spinner_initialization():

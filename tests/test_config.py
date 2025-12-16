@@ -1,9 +1,10 @@
 """Tests for configuration module."""
 
 import os
-import pytest
 from pathlib import Path
 from unittest.mock import patch
+
+import pytest
 
 
 def test_config_loads_env_vars(mock_env_vars, monkeypatch):
@@ -13,6 +14,7 @@ def test_config_loads_env_vars(mock_env_vars, monkeypatch):
 
     # Import after setting env vars
     import importlib
+
     from src import config
 
     importlib.reload(config)
@@ -32,6 +34,7 @@ def test_config_uses_defaults(monkeypatch):
 
     # Reload config module to pick up changes
     import importlib
+
     from src import config
 
     importlib.reload(config)
@@ -68,6 +71,7 @@ def test_validate_config_placeholder_api_key(mock_env_vars, monkeypatch):
     monkeypatch.setenv("OPENAI_API_KEY", "your-api-key-here")
 
     import importlib
+
     from src import config
 
     importlib.reload(config)
@@ -82,6 +86,7 @@ def test_validate_config_missing_database(mock_env_vars, monkeypatch, tmp_path):
     monkeypatch.setenv("DB_PATH", str(fake_db))
 
     import importlib
+
     from src import config
 
     importlib.reload(config)
@@ -95,6 +100,7 @@ def test_validate_config_success(mock_env_vars, temp_db, monkeypatch):
     monkeypatch.setenv("DB_PATH", temp_db)
 
     import importlib
+
     from src import config
 
     importlib.reload(config)

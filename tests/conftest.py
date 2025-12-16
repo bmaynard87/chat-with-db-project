@@ -1,10 +1,11 @@
 """Pytest configuration and shared fixtures."""
 
 import os
-import pytest
 import tempfile
 from pathlib import Path
 from unittest.mock import Mock, patch
+
+import pytest
 
 
 @pytest.fixture
