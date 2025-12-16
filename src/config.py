@@ -1,6 +1,7 @@
 """
 Configuration settings for the application.
 """
+
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -32,9 +33,8 @@ def validate_config():
     """Validate required configuration settings."""
     if not OPENAI_API_KEY or OPENAI_API_KEY == "your-api-key-here":
         raise ValueError("Please set your OPENAI_API_KEY in the .env file")
-    
+
     if not Path(DB_PATH).exists():
         raise FileNotFoundError(
-            f"Database '{DB_PATH}' not found. "
-            "Please run the notebook first to create the database."
+            f"Database '{DB_PATH}' not found. " "Please run the notebook first to create the database."
         )

@@ -1,4 +1,5 @@
 """Integration tests for end-to-end functionality."""
+
 import pytest
 from unittest.mock import patch, Mock
 
@@ -6,26 +7,29 @@ from unittest.mock import patch, Mock
 def test_full_query_flow_with_mock_llm(mock_env_vars, temp_db, monkeypatch):
     """Test complete flow from question to answer with mocked LLM."""
     monkeypatch.setenv("DB_PATH", temp_db)
-    
+
     import importlib
     from src import config, agent
+
     importlib.reload(config)
-    
+
     # Mock the LLM and agent creation
     mock_llm_response = Mock()
     mock_llm_response.invoke.return_value = {"output": "Total revenue is $100"}
-    
-    with patch("src.agent.ChatOpenAI") as mock_llm, \
-         patch("src.agent.create_sql_agent") as mock_create, \
-         patch("src.agent.SQLDatabase"), \
-         patch("src.agent.SQLDatabaseToolkit"):
-        
+
+    with (
+        patch("src.agent.ChatOpenAI") as mock_llm,
+        patch("src.agent.create_sql_agent") as mock_create,
+        patch("src.agent.SQLDatabase"),
+        patch("src.agent.SQLDatabaseToolkit"),
+    ):
+
         mock_llm.return_value = Mock()
         mock_create.return_value = mock_llm_response
-        
+
         agent_executor = agent.setup_agent(verbose=False)
         response = agent_executor.invoke({"input": "What is the total revenue?"})
-        
+
         assert response["output"] == "Total revenue is $100"
         mock_create.assert_called_once()
 
@@ -35,17 +39,18 @@ def test_database_connection_with_real_db(monkeypatch):
     # Set up environment for real database
     monkeypatch.setenv("OPENAI_API_KEY", "sk-test-key")
     monkeypatch.setenv("DB_PATH", "ecommerce.db")
-    
+
     import importlib
     from src import config
     from langchain_community.utilities import SQLDatabase
+
     importlib.reload(config)
-    
+
     # This test uses the actual ecommerce.db
     config.validate_config()  # Should not raise
-    
+
     db = SQLDatabase.from_uri(f"sqlite:///{config.DB_PATH}")
-    
+
     # Verify database has expected structure
     table_info = db.get_table_info()
     assert "transactions" in table_info
@@ -57,12 +62,14 @@ def test_database_connection_with_real_db(monkeypatch):
 def test_cli_entry_point(mock_env_vars, mock_agent):
     """Test CLI entry point executes without errors."""
     from src.cli import main
-    
-    with patch("src.cli.validate_config"), \
-         patch("src.cli.setup_agent", return_value=mock_agent), \
-         patch("src.cli.parse_args", return_value=Mock(verbose=False)), \
-         patch("builtins.input", side_effect=["exit"]):
-        
+
+    with (
+        patch("src.cli.validate_config"),
+        patch("src.cli.setup_agent", return_value=mock_agent),
+        patch("src.cli.parse_args", return_value=Mock(verbose=False)),
+        patch("builtins.input", side_effect=["exit"]),
+    ):
+
         # Should complete without raising
         main()
 
@@ -71,21 +78,21 @@ def test_config_validation_integration(tmp_path, monkeypatch):
     """Test configuration validation with various scenarios."""
     import importlib
     from src import config
-    
+
     # Valid configuration
     monkeypatch.setenv("OPENAI_API_KEY", "sk-valid-key")
     monkeypatch.setenv("DB_PATH", "ecommerce.db")
     importlib.reload(config)
-    
+
     try:
         config.validate_config()
     except FileNotFoundError:
         # Expected if ecommerce.db doesn't exist in test environment
         pass
-    
+
     # Invalid API key
     monkeypatch.setenv("OPENAI_API_KEY", "your-api-key-here")
     importlib.reload(config)
-    
+
     with pytest.raises(ValueError):
         config.validate_config()
